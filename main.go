@@ -3,29 +3,34 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
-
-	"github.com/PuerkitoBio/goquery"
+	"sync"
 )
 
 func main() {
-	url := "https://news.ycombinator.com/"
+	var wg sync.WaitGroup
 
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
+	for i := 1; i <= 5; i++ {
+		wg.Add(1)
+
+		go func(page int) {
+			defer wg.Done()
+
+			url := fmt.Sprintf("https://news.ycombinator.com/news?p=%d", page)
+
+			data, err := ScrapePage(url)
+			if err != nil {
+				log.Println("error scraping:", err)
+				return
+			}
+
+			fmt.Printf("Scraped page %d: %d results\n\n", page, len(data))
+
+			for _, article := range data {
+				fmt.Printf("Title: %s\nLink: %s\n\n", article.Title, article.Link)
+			}
+
+		}(i)
 	}
 
-	defer resp.Body.Close()
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	doc.Find(".titleline > a").Each(func(i int, s *goquery.Selection) {
-		title := s.Text()
-		link, _ := s.Attr("href")
-		fmt.Printf("%d %s\n%s\n\n", i+1, title, link)
-	})
+	wg.Wait()
 }
