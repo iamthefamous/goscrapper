@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/goscrapper.iml" filepath="$PROJECT_DIR$/.idea/goscrapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/goscraper.iml" filepath="$PROJECT_DIR$/.idea/goscraper.iml" />
     </modules>
   </component>
 </project>
